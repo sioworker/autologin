@@ -5,6 +5,7 @@
 
 struct config {
 	char user[256];
+	int relogin;
 	char *script;
 };
 

@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <string.h>
 #include <sys/wait.h>
@@ -26,6 +27,8 @@ int main(int argc, char **argv) {
 	struct passwd *pw = getpwnam(cfg.user);
 	if (!pw) error("unknown user '%s'", cfg.user);
 
+	if (!cfg.relogin && access(DONE, F_OK) == 0) run_getty();
+
 	child = fork();
 	if (child < 0) error("fork: %s", strerror(errno));
 	if (child == 0) run_session(&cfg, pw);
@@ -42,6 +45,12 @@ int main(int argc, char **argv) {
 
 	kill(-child, SIGTERM);
 	reset_tty();
+
+	if (!cfg.relogin) {
+		int fd = open(DONE, O_WRONLY | O_CREAT, 0644);
+		if (fd < 0) error("cannot create " DONE ": %s", strerror(errno));
+		close(fd);
+	}
 
 	return WIFEXITED(status) ? WEXITSTATUS(status) : 1;
 }

@@ -100,3 +100,10 @@ void reset_tty(void) {
 	if (chown(tty, 0, 0) < 0 || chmod(tty, 0600) < 0)
 		fprintf(stderr, "autologin: cannot reset %s: %s\n", tty, strerror(errno));
 }
+
+void run_getty(void) {
+	const char *tty = tty_path();
+
+	execl(GETTY, "getty", "38400", tty + strlen("/dev/"), (char *)NULL);
+	error("exec " GETTY ": %s", strerror(errno));
+}
