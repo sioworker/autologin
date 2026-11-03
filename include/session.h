@@ -6,10 +6,11 @@
 #include "config.h"
 
 // You might want to change this! there's a possibility that your terminal will exec this as its shell
-#define SHELL "/bin/sh"
-#define VT    1
-#define GETTY "/sbin/getty"
-#define DONE  "/run/autologin.done"
+#define SHELL  "/bin/sh"
+#define VT     1
+#define GETTY  "/sbin/getty"
+#define AGETTY "/sbin/agetty"
+#define DONE   "/run/autologin.done"
 
 /// Log the user in on VT and run the script with SHELL
 void run_session(const struct config *cfg, const struct passwd *pw) __attribute__((noreturn));

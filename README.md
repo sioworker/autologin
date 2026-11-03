@@ -1,28 +1,37 @@
 # autologin
 
-A small OpenRC service that logs a user in on tty1 without a password and runs a `/bin/sh` script as them. Made for people that have disk encryption and want autologin.
+A small service (OpenRC, systemd, runit or dinit) that logs a user in on tty1 without a password and runs a `/bin/sh` script as them. Made for people that have disk encryption and want autologin.
 
 ## Install
 
 ```sh
 make
 doas make install
-doas rc-update add autologin default
-doas rc-service autologin start
 ```
 
-This installs:
+`make install` detects your init system and installs the matching service from `init/`. If it finds more than one, it asks which to use. To skip the question, pick one yourself:
 
-- `/usr/local/sbin/autologin`
-- `/etc/init.d/autologin`
-- `/etc/autologin.conf` (only if it doesn't exist yet)
+```sh
+doas make install INIT=systemd
+```
 
-tty1 must be free, so comment out its getty in `/etc/inittab`:
+| Init system | Service file | Enable with |
+|-------------|--------------|-------------|
+| OpenRC  | `/etc/init.d/autologin` | `rc-update add autologin default` |
+| systemd | `/etc/systemd/system/autologin.service` | `systemctl enable autologin` |
+| runit   | `/etc/sv/autologin` (`/etc/runit/sv` on Artix) | `ln -s /etc/sv/autologin /var/service` |
+| dinit   | `/etc/dinit.d/autologin` | `dinitctl enable autologin` |
+
+It also installs `/usr/local/sbin/autologin` and `/etc/autologin.conf` (the config only if it doesn't exist yet).
+
+tty1 must be free. On systemd the service takes it from `getty@tty1` by itself. On OpenRC with busybox init, comment out its getty in `/etc/inittab`:
 
 ```sh
 doas sed -i 's|^tty1::|#tty1::|' /etc/inittab
 doas kill -HUP 1
 ```
+
+On runit and dinit, disable the tty1 getty service (`agetty-tty1` / `tty1`).
 
 The service needs `seatd`.
 
@@ -53,9 +62,9 @@ Stopping the service kills the whole session. Errors before the tty is taken go 
 
 ## Uninstall
 
+Disable and stop the service with your init system, then:
+
 ```sh
-doas rc-service autologin stop
-doas rc-update del autologin default
 doas make uninstall
 ```
 

@@ -2,6 +2,7 @@ CC       ?= cc
 CFLAGS   ?= -O2 -Wall -Wextra
 CPPFLAGS += -Iinclude
 PREFIX   ?= /usr/local
+INIT     ?=
 
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:src/%.c=build/%.o)
@@ -18,11 +19,12 @@ build:
 
 install: autologin
 	install -Dm755 autologin $(DESTDIR)$(PREFIX)/sbin/autologin
-	install -Dm755 etc/init.d/autologin $(DESTDIR)/etc/init.d/autologin
+	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" INIT="$(INIT)" sh init/install.sh install
 	[ -e $(DESTDIR)/etc/autologin.conf ] || install -Dm644 etc/autologin.conf $(DESTDIR)/etc/autologin.conf
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/sbin/autologin $(DESTDIR)/etc/init.d/autologin
+	rm -f $(DESTDIR)$(PREFIX)/sbin/autologin
+	DESTDIR="$(DESTDIR)" sh init/install.sh uninstall
 
 clean:
 	rm -rf build autologin

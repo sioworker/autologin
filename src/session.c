@@ -105,5 +105,6 @@ void run_getty(void) {
 	const char *tty = tty_path();
 
 	execl(GETTY, "getty", "38400", tty + strlen("/dev/"), (char *)NULL);
-	error("exec " GETTY ": %s", strerror(errno));
+	execl(AGETTY, "agetty", "38400", tty + strlen("/dev/"), (char *)NULL);
+	error("exec " GETTY " or " AGETTY ": %s", strerror(errno));
 }

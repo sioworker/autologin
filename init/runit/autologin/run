@@ -1,0 +1,3 @@
+#!/bin/sh
+sv check seatd >/dev/null || exit 1
+exec @SBINDIR@/autologin /etc/autologin.conf 2>>/var/log/autologin.log

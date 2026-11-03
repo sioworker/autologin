@@ -1,0 +1,15 @@
+[Unit]
+Description=Autologin a user on tty1 and run their session script
+After=systemd-user-sessions.service seatd.service dbus.service getty@tty1.service
+Wants=seatd.service
+Conflicts=getty@tty1.service
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+ExecStart=@SBINDIR@/autologin /etc/autologin.conf
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

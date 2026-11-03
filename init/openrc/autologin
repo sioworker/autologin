@@ -3,7 +3,7 @@
 description="Autologin a user on a VT and run their session script"
 
 supervisor=supervise-daemon
-command=/usr/local/sbin/autologin
+command=@SBINDIR@/autologin
 command_args="${AUTOLOGIN_CONF:-/etc/autologin.conf}"
 error_log=/var/log/autologin.log
 respawn_delay=2

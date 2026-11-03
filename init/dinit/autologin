@@ -1,0 +1,5 @@
+type = process
+command = @SBINDIR@/autologin /etc/autologin.conf
+restart = true
+waits-for = seatd
+logfile = /var/log/autologin.log
