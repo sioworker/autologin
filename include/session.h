@@ -5,6 +5,7 @@
 
 #include "config.h"
 
+// You might want to change this! there's a possibility that your terminal will exec this as its shell
 #define SHELL "/bin/sh"
 #define VT    1
 #define GETTY "/sbin/getty"
