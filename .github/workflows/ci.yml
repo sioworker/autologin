@@ -26,16 +26,14 @@ jobs:
       fail-fast: false
       matrix:
         cc: [gcc, clang]
-    defaults:
-      run:
-        shell: alpine.sh {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: jirutka/setup-alpine@v1
-        with:
-          packages: build-base linux-headers clang
-      - run: make CC=${{ matrix.cc }} CFLAGS="-O2 -Wall -Wextra -Werror"
-      - run: make test CC=${{ matrix.cc }} CFLAGS="-O2 -Wall -Wextra -Werror"
+      - run: |
+          docker run --rm -v "$PWD:/src" -w /src alpine:latest sh -ec '
+            apk add --no-cache build-base linux-headers clang
+            make CC=${{ matrix.cc }} CFLAGS="-O2 -Wall -Wextra -Werror"
+            make test CC=${{ matrix.cc }} CFLAGS="-O2 -Wall -Wextra -Werror"
+          '
 
   shellcheck:
     runs-on: ubuntu-latest
