@@ -34,6 +34,14 @@ owned by the user with mode 0700;
 .IP \(bu 2
 makes tty1 its controlling terminal, gives it to the user with mode 0620 and switches to it;
 .IP \(bu 2
+adds the session to utmp and
+.BR /var/log/wtmp ,
+so
+.BR who (1)
+and
+.BR last (1)
+show it (only with glibc, musl has no utmp);
+.IP \(bu 2
 drops to the user's uid, gid and supplementary groups;
 .IP \(bu 2
 changes to the user's home directory, or
@@ -67,7 +75,7 @@ Stopping it with
 or
 .B SIGHUP
 passes the signal to the whole session.
-When the session ends, the rest of its processes are killed and tty1 is given back to root.
+When the session ends, the rest of its processes are killed, the logout is recorded in utmp and wtmp, and tty1 is given back to root.
 .PP
 With
 .B relogin=no
@@ -107,6 +115,10 @@ Created when a session ends with
 .TP
 .BI /run/user/ uid
 Runtime directory created for the user.
+.TP
+.B /var/log/wtmp
+Login history.
+Records are only added if the file already exists.
 .TP
 .B /var/log/autologin.log
 Where the service files send errors that happen before tty1 is taken.
@@ -150,5 +162,7 @@ autologin \-\-check
 .SH SEE ALSO
 .BR autologin.conf (5),
 .BR seatd (1),
+.BR last (1),
+.BR who (1),
 .BR getty (8),
 .BR agetty (8)

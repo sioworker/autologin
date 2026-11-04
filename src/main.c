@@ -7,6 +7,7 @@
 
 #include "check.h"
 #include "config.h"
+#include "record.h"
 #include "session.h"
 #include "util.h"
 
@@ -41,6 +42,7 @@ int main(int argc, char **argv) {
 	child = fork();
 	if (child < 0) error("fork: %s", strerror(errno));
 	if (child == 0) run_session(&cfg, pw);
+	record_login(pw, child);
 
 	struct sigaction sa = { .sa_handler = forward_signal };
 	sigemptyset(&sa.sa_mask);
@@ -53,6 +55,7 @@ int main(int argc, char **argv) {
 		if (errno != EINTR) error("waitpid: %s", strerror(errno));
 
 	kill(-child, SIGTERM);
+	record_logout(child);
 	reset_tty();
 
 	if (!cfg.relogin) {

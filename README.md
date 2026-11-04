@@ -73,6 +73,7 @@ It parses the config, checks that the user exists, warns if they have no home or
 
 - creates `/run/user/<uid>`
 - takes tty1 as the controlling tty and switches to it
+- adds the session to utmp and wtmp, so `who` and `last` show it (glibc only, musl has no utmp)
 - drops to the user and their groups
 - sets `HOME`, `USER`, `LOGNAME`, `SHELL`, `PATH`, `TERM`, `XDG_RUNTIME_DIR`, `XDG_SEAT`, `XDG_VTNR`
 - runs the script as a login shell
@@ -85,7 +86,7 @@ Stopping the service kills the whole session. Errors before the tty is taken go 
 make test
 ```
 
-Runs the config parser against every file in `tests/configs/` and compares the output with the matching `.out` file, then runs `autologin --check` on every file in `tests/check/` (files starting with `fail-` must fail).
+Runs the config parser against every file in `tests/configs/` and compares the output with the matching `.out` file, then runs `autologin --check` on every file in `tests/check/` (files starting with `fail-` must fail). On glibc it also checks that logins and logouts land in a temporary utmp and wtmp.
 
 ## Uninstall
 
