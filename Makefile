@@ -18,6 +18,12 @@ build/%.o: src/%.c | build
 build:
 	mkdir -p build
 
+build/parse: tests/parse.c $(filter-out build/main.o,$(OBJ)) | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+test: build/parse
+	sh tests/run.sh build/parse
+
 install: autologin
 	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" INIT="$(INIT)" SU="$(SU)" sh init/install.sh install
 
@@ -29,4 +35,4 @@ clean:
 
 -include $(DEP)
 
-.PHONY: install uninstall clean
+.PHONY: install uninstall clean test

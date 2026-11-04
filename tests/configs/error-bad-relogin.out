@@ -1,0 +1,2 @@
+autologin: tests/configs/error-bad-relogin.conf: relogin= must be yes or no
+exit=1

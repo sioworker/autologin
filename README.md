@@ -1,5 +1,7 @@
 # autologin
 
+[![CI](https://github.com/sioworker/autologin/actions/workflows/ci.yml/badge.svg)](https://github.com/sioworker/autologin/actions/workflows/ci.yml)
+
 A small service (OpenRC, systemd, runit or dinit) that logs a user in on tty1 without a password and runs a `/bin/sh` script as them. Made for people that have disk encryption and want autologin.
 
 ## Install
@@ -65,6 +67,14 @@ exec sh
 - runs the script as a login shell
 
 Stopping the service kills the whole session. Errors before the tty is taken go to `/var/log/autologin.log`.
+
+## Tests
+
+```sh
+make test
+```
+
+Runs the config parser against every file in `tests/configs/` and compares the output with the matching `.out` file.
 
 ## Uninstall
 

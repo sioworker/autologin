@@ -1,0 +1,2 @@
+autologin: tests/configs/error-no-user.conf: no user= set
+exit=1

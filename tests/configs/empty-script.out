@@ -1,0 +1,4 @@
+user=sioworker
+relogin=1
+script:
+exit=0

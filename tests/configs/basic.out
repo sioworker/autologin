@@ -1,0 +1,6 @@
+user=sioworker
+relogin=1
+script:
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+exec dbus-run-session mango
+exit=0

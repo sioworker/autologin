@@ -3,7 +3,7 @@ set -e
 
 action=${1:-install}
 SBINDIR=${SBINDIR:-/usr/local/sbin}
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit 1
 . ./elevate.sh
 
 BIN=$DESTDIR$SBINDIR/autologin
@@ -34,16 +34,12 @@ choose() {
 		return
 	fi
 	if ! true 2>/dev/null </dev/tty; then
-		echo "found several init systems ($(echo $found)), set INIT= to pick one" >&2
+		echo "found several init systems ($(echo "$found" | tr '\n' ' ')), set INIT= to pick one" >&2
 		exit 1
 	fi
 
 	echo "Found several init systems:" >/dev/tty
-	i=1
-	for name in $found; do
-		echo "  $i) $name" >/dev/tty
-		i=$((i + 1))
-	done
+	echo "$found" | awk '{ print "  " NR ") " $0 }' >/dev/tty
 	printf "Which one? " >/dev/tty
 	read -r pick </dev/tty
 	picked=$(echo "$found" | sed -n "${pick}p")

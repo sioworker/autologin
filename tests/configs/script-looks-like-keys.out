@@ -1,0 +1,6 @@
+user=sioworker
+relogin=1
+script:
+user=someoneelse
+relogin=maybe
+exit=0

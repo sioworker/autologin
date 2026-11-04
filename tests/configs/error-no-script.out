@@ -1,0 +1,2 @@
+autologin: tests/configs/error-no-script.conf: no script= set
+exit=1

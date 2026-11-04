@@ -1,0 +1,2 @@
+autologin: tests/configs/error-typo.conf: unknown line 'relgoin=no'
+exit=1

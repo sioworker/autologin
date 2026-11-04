@@ -1,0 +1,6 @@
+user=sioworker
+relogin=0
+script:
+# kept, sh ignores it
+exec sh
+exit=0
