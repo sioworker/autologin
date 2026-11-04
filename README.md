@@ -58,6 +58,15 @@ script=
 exec sh
 ```
 
+### Checking the config
+
+```sh
+autologin --check            # checks /etc/autologin.conf
+autologin --check my.conf
+```
+
+It parses the config, checks that the user exists, warns if they have no home or aren't in the `seat` group, and runs `sh -n` on the script to catch syntax errors. It prints what would run and exits with 1 if something is wrong. It doesn't need root and doesn't log anyone in.
+
 ## What it does
 
 - creates `/run/user/<uid>`
@@ -74,7 +83,7 @@ Stopping the service kills the whole session. Errors before the tty is taken go 
 make test
 ```
 
-Runs the config parser against every file in `tests/configs/` and compares the output with the matching `.out` file.
+Runs the config parser against every file in `tests/configs/` and compares the output with the matching `.out` file, then runs `autologin --check` on every file in `tests/check/` (files starting with `fail-` must fail).
 
 ## Uninstall
 

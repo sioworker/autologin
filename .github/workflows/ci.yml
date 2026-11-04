@@ -39,4 +39,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: shellcheck -x -P SCRIPTDIR init/install.sh init/elevate.sh init/runit/autologin/run tests/run.sh
+      - run: shellcheck -x -P SCRIPTDIR init/install.sh init/elevate.sh init/runit/autologin/run tests/run.sh tests/check.sh

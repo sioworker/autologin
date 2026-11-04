@@ -5,6 +5,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "check.h"
 #include "config.h"
 #include "session.h"
 #include "util.h"
@@ -17,9 +18,17 @@ static void forward_signal(int sig) {
 }
 
 int main(int argc, char **argv) {
-	const char *conf = argc > 1 ? argv[1] : DEFAULT_CONF;
+	const char *conf = DEFAULT_CONF;
+	int check = 0;
 	struct config cfg = {0};
 
+	for (int i = 1; i < argc; i++) {
+		if (!strcmp(argv[i], "--check")) check = 1;
+		else if (argv[i][0] == '-') error("unknown option '%s', usage: autologin [--check] [CONFIG]", argv[i]);
+		else conf = argv[i];
+	}
+
+	if (check) return check_config(conf);
 	if (geteuid() != 0) error("must be run as root");
 
 	parse_config(conf, &cfg);

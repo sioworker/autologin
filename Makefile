@@ -21,8 +21,9 @@ build:
 build/parse: tests/parse.c $(filter-out build/main.o,$(OBJ)) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
-test: build/parse
+test: build/parse autologin
 	sh tests/run.sh build/parse
+	sh tests/check.sh ./autologin
 
 install: autologin
 	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" INIT="$(INIT)" SU="$(SU)" sh init/install.sh install
