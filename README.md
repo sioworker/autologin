@@ -6,13 +6,19 @@ A small service (OpenRC, systemd, runit or dinit) that logs a user in on tty1 wi
 
 ```sh
 make
-doas make install
+make install
 ```
 
 `make install` detects your init system and installs the matching service from `init/`. If it finds more than one, it asks which to use. To skip the question, pick one yourself:
 
 ```sh
-doas make install INIT=systemd
+make install INIT=systemd
+```
+
+You don't need to run it as root. It checks whether it can write the files it installs, and if it can't, it uses `doas` (or `sudo` if there's no doas) just for those writes. To use a specific one, set `SU`:
+
+```sh
+make install SU=sudo
 ```
 
 | Init system | Service file | Enable with |
@@ -65,7 +71,7 @@ Stopping the service kills the whole session. Errors before the tty is taken go 
 Disable and stop the service with your init system, then:
 
 ```sh
-doas make uninstall
+make uninstall
 ```
 
 `/etc/autologin.conf` is left in place.
