@@ -40,3 +40,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: shellcheck -x -P SCRIPTDIR init/install.sh init/elevate.sh init/runit/autologin/run tests/run.sh tests/check.sh
+
+  manpages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y mandoc
+      - run: mandoc -Tlint -Wwarning man/autologin.8 man/autologin.conf.5

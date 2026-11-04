@@ -30,7 +30,7 @@ make install SU=sudo
 | runit   | `/etc/sv/autologin` (`/etc/runit/sv` on Artix) | `ln -s /etc/sv/autologin /var/service` |
 | dinit   | `/etc/dinit.d/autologin` | `dinitctl enable autologin` |
 
-It also installs `/usr/local/sbin/autologin` and `/etc/autologin.conf` (the config only if it doesn't exist yet).
+It also installs `/usr/local/sbin/autologin`, the man pages `autologin(8)` and `autologin.conf(5)`, and `/etc/autologin.conf` (the config only if it doesn't exist yet).
 
 tty1 must be free. On systemd the service takes it from `getty@tty1` by itself. On OpenRC with busybox init, comment out its getty in `/etc/inittab`:
 
@@ -44,6 +44,8 @@ On runit and dinit, disable the tty1 getty service (`agetty-tty1` / `tty1`).
 The service needs `seatd`.
 
 ## Config
+
+See `man autologin.conf` for the full format.
 
 `/etc/autologin.conf`:
 

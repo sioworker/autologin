@@ -26,10 +26,10 @@ test: build/parse autologin
 	sh tests/check.sh ./autologin
 
 install: autologin
-	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" INIT="$(INIT)" SU="$(SU)" sh init/install.sh install
+	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" MANDIR="$(PREFIX)/share/man" INIT="$(INIT)" SU="$(SU)" sh init/install.sh install
 
 uninstall:
-	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" SU="$(SU)" sh init/install.sh uninstall
+	DESTDIR="$(DESTDIR)" SBINDIR="$(PREFIX)/sbin" MANDIR="$(PREFIX)/share/man" SU="$(SU)" sh init/install.sh uninstall
 
 clean:
 	rm -rf build autologin

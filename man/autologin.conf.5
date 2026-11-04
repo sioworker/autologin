@@ -1,0 +1,87 @@
+.TH AUTOLOGIN.CONF 5 2026-11-04 autologin "File Formats Manual"
+.SH NAME
+autologin.conf \- autologin configuration file
+.SH SYNOPSIS
+.B /etc/autologin.conf
+.SH DESCRIPTION
+.B autologin.conf
+tells
+.BR autologin (8)
+which user to log in and what to run.
+.PP
+The file has two parts.
+The first part holds
+.IB key = value
+lines.
+It ends with a line containing
+.BR script= .
+Everything after that line is the script.
+.PP
+In the first part, blank lines and lines starting with
+.B #
+are ignored, and a
+.B #
+after a value starts a comment.
+There must be no space between the key and
+.BR = .
+Any other line is an error, so a misspelled key is reported instead of being run as part of the script.
+.SH KEYS
+.TP
+.BI user= name
+The user to log in.
+Required.
+.TP
+.BR relogin= yes | no
+What happens when the script exits.
+With
+.B yes
+(the default) the user is logged in again.
+With
+.B no
+the user is logged in only once per boot, and after that tty1 shows a normal login prompt.
+.TP
+.B script=
+Marks where the script starts.
+Required.
+Anything after
+.B script=
+on the same line is ignored.
+.SH SCRIPT
+The script is passed to
+.B /bin/sh \-c
+as it is, including comments and lines that look like keys.
+It runs as a login shell in the user's home directory, after
+.B /etc/profile
+and
+.B ~/.profile
+are read.
+.PP
+The script usually ends with
+.BR exec ,
+so the program it starts replaces the shell.
+When that program exits, the session ends.
+.PP
+If the script is empty, an interactive shell is started on tty1.
+.SH EXAMPLES
+Start the mango Wayland compositor with a D-Bus session, once per boot:
+.PP
+.RS
+.EX
+# User to log in as
+user=sioworker
+relogin=no
+script=
+export XDG_RUNTIME_DIR="/run/user/$(id \-u)"
+exec dbus\-run\-session mango
+.EE
+.RE
+.PP
+Check the file after editing it:
+.PP
+.RS
+.EX
+autologin \-\-check
+.EE
+.RE
+.SH SEE ALSO
+.BR autologin (8)

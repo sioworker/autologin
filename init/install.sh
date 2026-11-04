@@ -3,11 +3,14 @@ set -e
 
 action=${1:-install}
 SBINDIR=${SBINDIR:-/usr/local/sbin}
+MANDIR=${MANDIR:-/usr/local/share/man}
 cd "$(dirname "$0")" || exit 1
 . ./elevate.sh
 
 BIN=$DESTDIR$SBINDIR/autologin
 CONF=$DESTDIR/etc/autologin.conf
+MAN8=$DESTDIR$MANDIR/man8/autologin.8
+MAN5=$DESTDIR$MANDIR/man5/autologin.conf.5
 
 has() {
 	command -v "$1" >/dev/null 2>&1
@@ -101,15 +104,17 @@ install_all() {
 	[ -n "$init" ] || init=$(choose)
 	service "$init"
 
-	elevate "$BIN" "$dest" "$CONF"
+	elevate "$BIN" "$dest" "$CONF" "$MAN8" "$MAN5"
 	put ../autologin 755 "$BIN"
+	put ../man/autologin.8 644 "$MAN8"
+	put ../man/autologin.conf.5 644 "$MAN5"
 	put_template "$src" "$mode" "$dest"
 	[ -e "$CONF" ] || put ../etc/autologin.conf 644 "$CONF"
 	echo "enable with: $enable"
 }
 
 uninstall_all() {
-	set -- "$BIN" \
+	set -- "$BIN" "$MAN8" "$MAN5" \
 		"$DESTDIR/etc/init.d/autologin" \
 		"$DESTDIR/etc/systemd/system/autologin.service" \
 		"$DESTDIR/etc/dinit.d/autologin" \

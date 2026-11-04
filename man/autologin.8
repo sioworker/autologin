@@ -1,0 +1,154 @@
+.TH AUTOLOGIN 8 2026-11-04 autologin "System Manager's Manual"
+.SH NAME
+autologin \- log a user in on tty1 without a password
+.SH SYNOPSIS
+.B autologin
+.RB [ \-\-check ]
+.RI [ config ]
+.SH DESCRIPTION
+.B autologin
+logs the user named in
+.I config
+in on tty1 without asking for a password, and runs the script from
+.I config
+as that user with
+.BR /bin/sh .
+It is meant to be started by an init system service (OpenRC, systemd, runit or dinit) as root.
+.PP
+If
+.I config
+is not given,
+.B /etc/autologin.conf
+is used.
+See
+.BR autologin.conf (5)
+for its format.
+.PP
+To start the session,
+.B autologin
+does the following:
+.IP \(bu 2
+creates
+.BI /run/user/ uid
+owned by the user with mode 0700;
+.IP \(bu 2
+makes tty1 its controlling terminal, gives it to the user with mode 0620 and switches to it;
+.IP \(bu 2
+drops to the user's uid, gid and supplementary groups;
+.IP \(bu 2
+changes to the user's home directory, or
+.B /
+if that fails;
+.IP \(bu 2
+clears the environment and sets
+.BR HOME ,
+.BR USER ,
+.BR LOGNAME ,
+.BR SHELL ,
+.BR PATH ,
+.BR TERM ,
+.BR XDG_RUNTIME_DIR ,
+.B XDG_SEAT
+and
+.BR XDG_VTNR ;
+.IP \(bu 2
+runs the script as a login shell, so
+.B /etc/profile
+and
+.B ~/.profile
+are read first.
+If the script is empty, an interactive shell is started instead.
+.PP
+.B autologin
+stays in the foreground until the session ends.
+Stopping it with
+.BR SIGTERM ,
+.B SIGINT
+or
+.B SIGHUP
+passes the signal to the whole session.
+When the session ends, the rest of its processes are killed and tty1 is given back to root.
+.PP
+With
+.B relogin=no
+in the config,
+.B autologin
+creates
+.B /run/autologin.done
+when the session ends.
+When it is started again while that file exists, it runs a normal login prompt on tty1
+.RB ( /sbin/getty ,
+or
+.B /sbin/agetty
+if there is no getty) instead of logging the user in.
+.B /run
+is cleared on reboot, so the next boot logs in automatically again.
+.SH OPTIONS
+.TP
+.B \-\-check
+Check
+.I config
+without logging anyone in, and print what would run.
+It reports an error if the user does not exist or the script has a syntax error
+(checked with
+.BR "sh \-n" ),
+and warns if the user's home directory does not exist or the user is not in the
+.B seat
+group.
+It does not need root.
+.SH FILES
+.TP
+.B /etc/autologin.conf
+Default config file.
+.TP
+.B /run/autologin.done
+Created when a session ends with
+.BR relogin=no .
+.TP
+.BI /run/user/ uid
+Runtime directory created for the user.
+.TP
+.B /var/log/autologin.log
+Where the service files send errors that happen before tty1 is taken.
+.SH EXIT STATUS
+Without
+.BR \-\-check ,
+the exit status of the session, or 1 if it could not be started or was killed by a signal.
+.PP
+With
+.BR \-\-check ,
+0 if the config is fine and 1 if it is not.
+.SH NOTES
+Nothing else may run on tty1.
+Disable its getty first, for example by commenting out the tty1 line in
+.B /etc/inittab
+on busybox init.
+The systemd service stops
+.B getty@tty1
+by itself.
+.PP
+Wayland compositors need
+.BR seatd (1)
+running, and the user has to be in the
+.B seat
+group.
+.PP
+The shell and the terminal are set at compile time with
+.B SHELL
+and
+.B VT
+in
+.BR include/session.h .
+.SH EXAMPLES
+Check the installed config:
+.PP
+.RS
+.EX
+autologin \-\-check
+.EE
+.RE
+.SH SEE ALSO
+.BR autologin.conf (5),
+.BR seatd (1),
+.BR getty (8),
+.BR agetty (8)
